@@ -1,0 +1,100 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs", "scikit-build-core"]
+build-backend = "hatchling.build"
+
+[project]
+name = "JsonType"
+description = "C++ types for JSON-like datastructure"
+readme = "README.md"
+license = { file = "LICENSE" }
+dynamic = ["version"]
+authors = [
+    {name="Cristian Le", email="git@lecris.dev"},
+]
+maintainers = [
+    {name="Cristian Le", email="git@lecris.dev"},
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Unix",
+    "Programming Language :: C++",
+    "Topic :: File Formats :: JSON",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.entry-points."cmake.prefix"]
+JsonTypePrefix = "json_type"
+
+[project.urls]
+homepage = "https://json-type.readthedocs.io/"
+documentation = "https://json-type.readthedocs.io/"
+repository = "https://github.com/LecrisUT/JsonType"
+
+[project.optional-dependencies]
+docs = [
+    "sphinx >= 7.0",
+    "furo",
+    "sphinx-design",
+    "sphinx-togglebutton",
+    "myst-parser",
+    "sphinx-tippy",
+    "sphinx-copybutton",
+    "sphinx-prompt",
+    "towncrier",
+]
+
+[tool.hatch.build.targets.wheel.hooks.scikit-build]
+
+[tool.scikit-build]
+wheel.install-dir = "json_type"
+wheel.py-api = "py3"
+experimental = true
+
+[tool.scikit-build.cmake.define]
+JSONTYPE_TEST = "OFF"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+version_scheme = "release-branch-semver"
+
+[tool.towncrier]
+name = "JsonType"
+directory = ".changelog.d"
+filename = "Changelog.md"
+all_bullets = false
+
+[[tool.towncrier.type]]
+name = "⭐ Main changes"
+directory = "main"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "break"
+name = "⚠️ Breaking changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "feat"
+name = "👀 Features and Improvements"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fix"
+name = "🐛 Bug fixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "doc"
+name = "📘 Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "misc"
+name = "⚙️ Miscaleneous"
+showcontent = true
