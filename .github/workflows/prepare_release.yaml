@@ -1,0 +1,66 @@
+name: 🔨 Prepare release
+run-name: 🔨 Prepare release from ${{ inputs.tag || github.ref_name }}
+
+on:
+  push:
+    branches: [ main, v.* ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        type: string
+        description: Version tag to create
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tibdex/github-app-token@v2
+        id: token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - id: version
+        name: Find version
+        run: |
+          pip install hatch
+
+          # Get verison from workflow tag or hatch version
+          if [[ -n "${{ inputs.tag }}" ]]; then
+            raw_version="${{ inputs.tag }}"
+          else
+            raw_version=$(hatch version)
+          fi
+          echo "raw_version=$raw_version" >> "$GITHUB_OUTPUT"
+          # Remove any dev suffixes
+          version=$(echo $raw_version | sed -r -e "s/([0-9\.]*).*/\1/" -e 's/.$//')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - id: changelog
+        name: Build the changelog
+        run: |
+          pip install towncrier
+
+          {
+            echo "content<<EOF"
+            towncrier build --version "${{ steps.version.outputs.version }}" --draft 2>/dev/null
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          towncrier build --version "${{ steps.version.outputs.version }}" --yes
+
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          title: "🚀 Release ${{ steps.version.outputs.version }}"
+          commit-message: "🚀 Release ${{ steps.version.outputs.version }}"
+          token: ${{ steps.token.outputs.token }}
+          add-paths: |
+            Changelog.md
+            .changelog.d/*
+          branch: "prepare_release/v${{ steps.version.outputs.version }}"
+          body: |
+            ${{ steps.changelog.outputs.content }}
