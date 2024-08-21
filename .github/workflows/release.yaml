@@ -1,0 +1,25 @@
+name: 🚀 Release
+run-name: 🚀 Release (${{ github.ref_name }})
+
+on:
+  pull_request:
+    branches: [ "prepare_release/v*" ]
+    types: [ closed ]
+
+jobs:
+  release:
+    name: 🚀 Create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          version=$(echo "${{ github.ref_name }}" | sed -r "s/prepare_release\/v(.*)/\1/")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: JsonType ${{ steps.version.outputs.version }}
+          tag_name: "v${{ steps.version.outputs.version }}"
+          body: |
+            ${{ github.event.pull_request.body }}
+    if: github.event.pull_request.merged == true

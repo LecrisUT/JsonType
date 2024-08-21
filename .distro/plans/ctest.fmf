@@ -1,0 +1,16 @@
+summary: Test the bundled ctests
+
+prepare:
+  - how: install
+    package:
+      - cmake
+      - rsync
+      - gcc-c++
+      - git
+      - cmake(Catch2)
+
+discover+:
+  how: fmf
+  path: test
+execute:
+  how: tmt

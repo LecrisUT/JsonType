@@ -1,0 +1,31 @@
+name: 👀 coverage
+
+on:
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        description: Codecov token of the main repository
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  ctest:
+    name: ctest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lukka/get-cmake@latest
+      - uses: lukka/run-cmake@v10.7
+        with:
+          workflowPreset: coverage
+      - uses: threeal/gcovr-action@xml-out
+        with:
+          xml-out: coverage.xml
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          plugin: noop
+          files: coverage.xml
+          verbose: true
