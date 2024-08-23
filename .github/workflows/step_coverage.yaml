@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: lukka/get-cmake@latest
-      - uses: lukka/run-cmake@v10.3
+      - uses: lukka/run-cmake@v10.7
         with:
           workflowPreset: coverage
       - uses: threeal/gcovr-action@xml-out

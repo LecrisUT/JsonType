@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: lukka/get-cmake@latest
       - name: Run CMake configuration for ${{ matrix.toolchain }} toolchain
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10.7
         with:
           workflowPreset: "${{ matrix.toolchain }}-ci"
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
@@ -65,7 +65,7 @@ jobs:
         with:
           cmakeVersion: ${{ matrix.cmake }}
       - name: Run CMake workflow
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10.7
         with:
           workflowPreset: gcc-ci
         continue-on-error: ${{ matrix.experimental && inputs.mask-experimental}}
